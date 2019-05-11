@@ -63,7 +63,7 @@ func InitilizeBlockchainRoot() {
 
 	transaction := NewTransaction(
 		"Root Node",
-		"This is root node all node of seven kingdom",
+		"This is root node all nodes of seven kingdom",
 		10000,
 		defaultUser,
 	)
@@ -73,6 +73,7 @@ func InitilizeBlockchainRoot() {
 
 func addBlock(transinfo map[string]string) {
 
+	// TODO check if ok
 	subject := transinfo["subject"]
 	body := transinfo["body"]
 	amount := transinfo["amount"]
@@ -89,5 +90,26 @@ func addBlock(transinfo map[string]string) {
 }
 
 func VerifyBlockChain() bool {
+	alltrans, err := GetAllTransactions()
+	if err != nil {
+		print("database error")
+		return false
+	}
+
+	for _, value := range alltrans {
+		//root node
+		if value.HashID == "" {
+			return value.VerifyHash()
+		}
+
+		_, ok := alltrans[value.ParentHash]
+		if !ok {
+			return false
+		}
+
+		return value.VerifyHash()
+
+	}
+
 	return false
 }

@@ -12,8 +12,6 @@ import (
 
 func addTransaction(w http.ResponseWriter, r *http.Request) {
 
-	_ = getUserFromSession()
-
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		print("body read error")

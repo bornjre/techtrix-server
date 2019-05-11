@@ -6,6 +6,8 @@ import (
 
 var (
 	TransactionBucketName = []byte("transactions")
+	OrderedTransactions   = []byte("orderedransactions")
+	OrderedKey            = []byte("1")
 )
 
 func AddTransaction(trans *Transaction) error {
@@ -38,9 +40,9 @@ func GetTransaction(hash_id string) (*Transaction, error) {
 	return transaction, nil
 }
 
-func GetAllTransactions() ([]*Transaction, error) {
+func GetAllTransactions() (map[string]*Transaction, error) {
 
-	transactions := []*Transaction{}
+	transactions := make(map[string]*Transaction)
 
 	transactionsbyte, err := database.DB.ReadAll(TransactionBucketName)
 	if err != nil {
@@ -53,7 +55,21 @@ func GetAllTransactions() ([]*Transaction, error) {
 		if err != nil {
 			return nil, err
 		}
-		transactions = append(transactions, &transaction)
+		transactions[transaction.HashID] = &transaction
 	}
 	return transactions, nil
+}
+
+func GetOrderedTransactions() []string {
+	orderedtransbyte, err := database.DB.Read(OrderedKey, OrderedTransactions)
+	if err != nil {
+		return nil
+	}
+	var orderedtrans []string
+
+	err = database.Decode(orderedtransbyte, orderedtrans)
+	if err != nil {
+		return nil
+	}
+	return orderedtrans
 }
