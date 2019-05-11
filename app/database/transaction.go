@@ -6,9 +6,11 @@ type Transaction struct {
 }
 
 type TransactionInfo struct {
-	subject    string `json:subject`
-	body       string `json:body`
-	created_at int64  `json:created_at`
+	Subject   string `json:subject`
+	Body      string `json:body`
+	CreatedAt int64  `json:created_at`
+	Amount    int64  `json:amount`
+	User      string `json:user`
 }
 
 var (
@@ -17,7 +19,7 @@ var (
 
 func AddTransaction(trans *Transaction) error {
 
-	transbyte, err := Encode(traans)
+	transbyte, err := Encode(trans)
 	if err != nil {
 		return err
 	}
