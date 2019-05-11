@@ -1,5 +1,10 @@
 package database
 
+import (
+	"crypto/sha256"
+	"time"
+)
+
 type Transaction struct {
 	HashID          string          `json:hash_id`
 	TransactionInfo TransactionInfo `json:transaction_info`
@@ -8,7 +13,7 @@ type Transaction struct {
 type TransactionInfo struct {
 	Subject   string `json:subject`
 	Body      string `json:body`
-	CreatedAt int64  `json:created_at`
+	CreatedAt string `json:created_at`
 	Amount    int64  `json:amount`
 	User      string `json:user`
 }
@@ -16,6 +21,21 @@ type TransactionInfo struct {
 var (
 	TransactionBucketName = []byte("transactions")
 )
+
+func NewTransaction(hash_id string,subject string, body string, amount int64, user string,) *Transaction {
+
+	if err != nil {
+		return nil
+	}
+	return &TransactionInfo{
+		HashID:    hash_id,
+		Subject : subject,
+		Body : body,
+		User:      user,
+		CreatedAt: time.Now().Unix(),
+		Amount: amount
+	}
+}
 
 func AddTransaction(trans *Transaction) error {
 
