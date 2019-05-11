@@ -77,23 +77,6 @@ func (t *Transaction) VerifyHash() bool {
 	return t.GenerateHash() == t.HashID
 }
 
-func InitilizeBlockchainRoot() {
-
-	print("creating root node")
-
-	transaction := NewTransaction(
-		"Root Node",
-		"This is root node all nodes of seven kingdom",
-		10000,
-		defaultUser,
-	)
-	transaction.HashID = transaction.GenerateHash()
-
-	printl("ROOTNODE:", transaction.HashID)
-	err := AddTransaction(transaction)
-	print(err)
-}
-
 func addBlock(transinfo map[string]string) error {
 
 	// TODO check if ok
