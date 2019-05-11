@@ -6,7 +6,7 @@ import (
 )
 
 type Transaction struct {
-	HashID          string          `json:hash_id`
+	HashID          string          `json:hashid`
 	TransactionInfo TransactionInfo `json:transaction_info`
 }
 
@@ -22,13 +22,13 @@ var (
 	TransactionBucketName = []byte("transactions")
 )
 
-func NewTransaction(hash_id string,subject string, body string, amount int64, user string,) *Transaction {
+func NewTransaction(hashid string,subject string, body string, amount int64, user string,) *Transaction {
 
 	if err != nil {
 		return nil
 	}
 	return &TransactionInfo{
-		HashID:    hash_id,
+		HashID:    hashid,
 		Subject : subject,
 		Body : body,
 		User:      user,
@@ -51,9 +51,9 @@ func AddTransaction(trans *Transaction) error {
 	return nil
 }
 
-func GetTransaction(hash_id string) (*Transaction, error) {
+func GetTransaction(hashid string) (*Transaction, error) {
 	transaction := &Transaction{}
-	transbyte, err := DB.Read([]byte(hash_id), TransactionBucketName)
+	transbyte, err := DB.Read([]byte(hashid), TransactionBucketName)
 
 	if err != nil {
 		return nil, err
