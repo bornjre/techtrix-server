@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bornjre/hacathon01/app"
+	"github.com/bornjre/techtrix-server/app"
 )
 
 func main() {
