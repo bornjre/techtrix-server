@@ -16,7 +16,7 @@ func ErrorHappened(msg ...interface{}) {
 }
 
 func printl(msg ...interface{}) {
-	fmt.Print(msg...)
+	fmt.Println(msg...)
 
 }
 

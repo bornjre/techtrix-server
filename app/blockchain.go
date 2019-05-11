@@ -3,6 +3,7 @@ package app
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -19,9 +20,9 @@ func init() {
 }
 
 type Transaction struct {
-	HashID          string          `json:hash_id`
-	TransactionInfo TransactionInfo `json:transaction_info`
-	ParentHash      string          `json:parenthash`
+	HashID          string           `json:hash_id`
+	TransactionInfo *TransactionInfo `json:transaction_info`
+	ParentHash      string           `json:parenthash`
 }
 
 type TransactionInfo struct {
@@ -33,16 +34,17 @@ type TransactionInfo struct {
 }
 
 func (tf *TransactionInfo) getBytes() []byte {
-	concatstr := tf.Subject + tf.Body + string(tf.CreatedAt) + strconv.Itoa(int(tf.Amount)) + tf.User
-	print("bytes from body")
-	print(concatstr)
-	return []byte(concatstr)
+	b, err := json.Marshal(tf)
+	if err != nil {
+		printl("MARSEL ERR", err)
+	}
+	return b
 }
 
 func NewTransaction(subject string, body string, amount int64, user string) *Transaction {
 
 	return &Transaction{
-		TransactionInfo: TransactionInfo{
+		TransactionInfo: &TransactionInfo{
 
 			Subject:   subject,
 			Body:      body,
@@ -71,6 +73,7 @@ func (t *Transaction) GenerateHash() string {
 }
 
 func (t *Transaction) VerifyHash() bool {
+	printl(t.GenerateHash(), ">>", t.HashID)
 	return t.GenerateHash() == t.HashID
 }
 
@@ -105,8 +108,6 @@ func addBlock(transinfo map[string]string) error {
 	}
 
 	transaction := NewTransaction(subject, body, int64(amountint), defaultUser)
-	transaction.HashID = transaction.GenerateHash()
-
 	//get parent
 	_, err = GetTransaction(parenthash)
 	if err != nil {
@@ -115,6 +116,7 @@ func addBlock(transinfo map[string]string) error {
 	}
 
 	transaction.ParentHash = parenthash
+	transaction.HashID = transaction.GenerateHash()
 
 	err = AddTransaction(transaction)
 	if err != nil {
@@ -134,24 +136,34 @@ func VerifyBlockChain() (bool, error) {
 
 	for _, value := range alltrans {
 		//root node
-		if value.HashID == "" {
+		printl("HERE")
+		fmt.Printf("%+v", value)
+		fmt.Printf("%+v", value.TransactionInfo)
+		printl("HERE")
+		fmt.Println("parent:", value.ParentHash)
+		printl("==============")
+		if value.ParentHash == "" {
+			printl("INSIDE>>>>>>")
 			if value.VerifyHash() {
+				printl("one passed")
 				continue
 			} else {
 				return false, fmt.Errorf(" %s is modified: %v", value.HashID, value)
 			}
-		}
-
-		_, ok := alltrans[value.ParentHash]
-		if !ok {
-			return false, fmt.Errorf(" %s 's parent has error : %v", value.HashID, value)
-		}
-		if value.VerifyHash() {
-			continue
 		} else {
-			return false, fmt.Errorf(" %s is modified: %v", value.HashID, value)
-		}
 
+			_, ok := alltrans[value.ParentHash]
+			if !ok {
+				return false, fmt.Errorf(" %s 's parent has error : %v", value.HashID, value)
+			}
+			if value.VerifyHash() {
+				printl("one passed 2")
+				continue
+			} else {
+				return false, fmt.Errorf(" %s is modified: %v", value.HashID, value)
+			}
+
+		}
 	}
 
 	return true, nil
