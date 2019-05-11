@@ -5,10 +5,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func Run() {
-	fmt.Println(http.ListenAndServe(":8080", GetRouter()))
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodOptions},
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"Api-key", "Content-Type", "Accept"},
+	})
+	fmt.Println(http.ListenAndServe(":8080", c.Handler(GetRouter())))
 }
 
 func GetRouter() *mux.Router {
@@ -19,6 +26,7 @@ func GetRouter() *mux.Router {
 	r.HandleFunc("/search/{str}", search).Methods("GET")
 	r.HandleFunc("/publish", publish).Methods("GET")
 	r.HandleFunc("/subscribe", subscribe)
+	r.HandleFunc("/login", SignIn).Methods("POST")
 	return r
 
 }
