@@ -3,7 +3,8 @@ package database
 import (
 	"encoding/json"
 	"errors"
-	"os"
+
+	"github.com/bornjre/techtrix-server/app/config"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -26,11 +27,7 @@ func Close() {
 }
 
 func init() {
-
-	firstrun := false
-	if _, err := os.Stat("block.db"); os.IsNotExist(err) {
-		firstrun = true
-	}
+	firstrun := config.IsFirstRun()
 
 	err := DB.Open("block.db")
 	if err != nil {
@@ -41,7 +38,9 @@ func init() {
 	}
 }
 
-func runMigration() {}
+func runMigration() {
+
+}
 
 func (b *Boltdb) Open(path string) error {
 
@@ -55,6 +54,8 @@ func (b *Boltdb) Open(path string) error {
 }
 
 func (b *Boltdb) Create(key, value, bucket []byte) error {
+	print("KEY::")
+	print(key)
 
 	err := b.conn.Update(func(tx *bolt.Tx) error {
 		bk, err := tx.CreateBucketIfNotExists(bucket)

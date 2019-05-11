@@ -65,7 +65,7 @@ func NewBlockChain() *BlockChain {
 func (c *BlockChain) getLatestBlock() *Block {
 	fmt.Printf("%+v", c.hashlist)
 	_hashid := c.hashlist[len(c.hashlist)-1]
-	print(len(c.hashlist))
+	printl(len(c.hashlist))
 	block, ok := c.Hashstore[_hashid]
 	if !ok {
 		ErrorHappened("No latest block to get")
@@ -77,7 +77,7 @@ func (c *BlockChain) initBlock(data string) error {
 	// TODO init data type depend upon on our tansaction type
 
 	if len(c.Hashstore) != 0 && len(c.hashlist) != 0 {
-		print("???")
+		printl("???")
 		return ErrBCinit
 	}
 
@@ -111,7 +111,7 @@ func (c *BlockChain) VerifyBlockChain() bool {
 
 		block, ok := c.Hashstore[index]
 		if !ok {
-			print("Error at key:", key)
+			printl("Error at key:", key)
 			return false
 		}
 

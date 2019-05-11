@@ -14,7 +14,7 @@ func addTransaction(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		print("body read error")
+		printl("body read error")
 		errorResp(w, errors.New("body read error"))
 		return
 	}
@@ -22,7 +22,7 @@ func addTransaction(w http.ResponseWriter, r *http.Request) {
 	var transactioninfo map[string]string
 	err = json.Unmarshal(body, &transactioninfo)
 	if err != nil {
-		print("body unmarshel error")
+		printl("body unmarshel error")
 		return
 	}
 
@@ -67,9 +67,20 @@ func search(w http.ResponseWriter, r *http.Request) {
 			errorResp(w, err)
 			return
 		} */
-	print(str)
+	printl(str)
 	//search
 	// TODO
+}
+
+func verify(w http.ResponseWriter, r *http.Request) {
+	ok, err := VerifyBlockChain()
+	if ok {
+		generateResp(w, "Blockchain is verified", nil)
+		return
+	}
+
+	errorResp(w, err)
+
 }
 
 func publish(w http.ResponseWriter, r *http.Request) {}

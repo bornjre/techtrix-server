@@ -18,6 +18,7 @@ func AddTransaction(trans *Transaction) error {
 	}
 
 	err = database.DB.Create([]byte(trans.HashID), transbyte, TransactionBucketName)
+	printl(err)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ func ErrorHappened(msg ...interface{}) {
 	os.Exit(1)
 }
 
-func print(msg ...interface{}) {
+func printl(msg ...interface{}) {
 	fmt.Print(msg...)
 
 }
