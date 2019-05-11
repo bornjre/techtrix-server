@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"errors"
+	"os"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -17,6 +18,30 @@ var (
 type Boltdb struct {
 	conn *bolt.DB
 }
+
+var DB = &Boltdb{}
+
+func Close() {
+	DB.Close()
+}
+
+func init() {
+
+	firstrun := false
+	if _, err := os.Stat("block.db"); os.IsNotExist(err) {
+		firstrun = true
+	}
+
+	err := DB.Open("block.db")
+	if err != nil {
+		panic(err)
+	}
+	if firstrun {
+		runMigration()
+	}
+}
+
+func runMigration() {}
 
 func (b *Boltdb) Open(path string) error {
 

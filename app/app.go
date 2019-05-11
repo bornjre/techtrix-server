@@ -1,22 +1,24 @@
 package app
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
 
 func Run() {
+	fmt.Println(http.ListenAndServe(":8080", GetRouter()))
+}
 
-	bc := NewBlockChain()
-
-	bc.initBlock("Mother of all blocks")
-	child1 := bc.addBlock("Children1")
-	bc.addBlock("grandchild")
-	bc.printBlockChain()
-	fmt.Println("Checking blockchain..")
-	fmt.Println(bc.VerifyBlockChain())
-
-	fmt.Println("Intermission")
-	child1.Hash = "ASASBBDBDBBDBBD"
-
-	fmt.Println("Is block still correct ?")
-	print(bc.VerifyBlockChain())
+func GetRouter() *mux.Router {
+	r := mux.NewRouter()
+	r.HandleFunc("/transactions", addTransaction).Methods("POST")
+	r.HandleFunc("/transactions", getTransactions).Methods("GET")
+	r.HandleFunc("/transactions/{hashid}", getTransaction).Methods("GET")
+	r.HandleFunc("/search/{str}", search).Methods("GET")
+	r.HandleFunc("/publish", publish).Methods("GET")
+	r.HandleFunc("/subscribe", subscribe)
+	return r
 
 }
