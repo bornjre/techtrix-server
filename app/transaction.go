@@ -61,6 +61,10 @@ func GetAllTransactions() (map[string]*Transaction, error) {
 	return transactions, nil
 }
 
+// func GetAllGraph() (map[string]*Transaction, error) {
+
+// }
+
 func GetOrderedTransactions() []string {
 	orderedtransbyte, err := database.DB.Read(OrderedKey, OrderedTransactions)
 	if err != nil {

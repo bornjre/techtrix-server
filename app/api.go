@@ -85,4 +85,10 @@ func verify(w http.ResponseWriter, r *http.Request) {
 
 func publish(w http.ResponseWriter, r *http.Request) {}
 
-func subscribe(w http.ResponseWriter, r *http.Request) {}
+func subscribe(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func getgraph(w http.ResponseWriter, r *http.Request) {
+
+}
