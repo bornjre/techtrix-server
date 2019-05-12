@@ -30,6 +30,26 @@ func addTransaction(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func updateTransaction(w http.ResponseWriter, r *http.Request) {
+
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	if err != nil {
+		printl("body read error")
+		errorResp(w, errors.New("body read error"))
+		return
+	}
+	defer r.Body.Close()
+	var transactioninfo map[string]string
+	err = json.Unmarshal(body, &transactioninfo)
+	if err != nil {
+		printl("body unmarshel error")
+		return
+	}
+
+	updateBlock(transactioninfo)
+
+}
+
 func getTransactions(w http.ResponseWriter, r *http.Request) {
 
 	trans, err := GetAllTransactions()
@@ -86,9 +106,6 @@ func verify(w http.ResponseWriter, r *http.Request) {
 func publish(w http.ResponseWriter, r *http.Request) {}
 
 func subscribe(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func getgraph(w http.ResponseWriter, r *http.Request) {
+	printl("websocket!!")
 
 }

@@ -12,7 +12,7 @@ type subscribers struct {
 func NewSubscriberService() *subscribers {
 	return &subscribers{
 		AllConns:      make([]*websocket.Conn, 10),
-		BroadcastChan: make(chan string),
+		BroadcastChan: make(chan string, 20),
 	}
 }
 
