@@ -8,8 +8,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bornjre/techtrix-server/app/database"
+
 	"github.com/bornjre/techtrix-server/app/config"
 )
+
+var subscribersService *subscribers
 
 func init() {
 	print("initilizing blockchain.., ")
@@ -17,6 +21,8 @@ func init() {
 		InitilizeBlockchainRoot()
 
 	}
+	subscribersService = NewSubscriberService()
+	go subscribersService.RunService()
 }
 
 type Transaction struct {
@@ -107,7 +113,47 @@ func addBlock(transinfo map[string]string) error {
 		return err
 	}
 	printl("NODEADDED:", transaction.HashID)
+	subscribersService.BroadcastChan <- fmt.Sprintf("%s : %s", transaction.HashID, transaction.ParentHash)
 	return nil
+}
+
+func updateBlock(transinfo map[string]string) {
+	hashid, ok := transinfo["hashid"]
+	if !ok {
+		return
+	}
+
+	trans, err := GetTransaction(hashid)
+	if err != nil {
+		printl(err)
+		return
+	}
+	b, err := database.Encode(transinfo)
+	if err != nil {
+		printl(err)
+		return
+	}
+	t := &TransactionInfo{}
+	err = database.Decode(b, t)
+	if err != nil {
+		printl(err)
+		return
+	}
+	trans.TransactionInfo = t
+	//AddTransaction(trans)
+	transbyte, err := database.Encode(trans)
+	if err != nil {
+		printl(err)
+		return
+	}
+
+	err = database.DB.Update([]byte(trans.HashID), transbyte, TransactionBucketName)
+
+	if err != nil {
+		printl(err)
+		return
+	}
+
 }
 
 func VerifyBlockChain() (bool, error) {
