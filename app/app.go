@@ -27,8 +27,7 @@ func GetRouter() *mux.Router {
 	r.HandleFunc("/verify", verify).Methods("GET")
 	r.HandleFunc("/search/{str}", search).Methods("GET")
 	r.HandleFunc("/publish", publish).Methods("GET")
-	r.HandleFunc("/subscribe", subscribe)
-	//r.HandleFunc("/getgraph", getgraph)
+	r.HandleFunc("/subscribe", subscribersService.subscribe)
 	r.HandleFunc("/login", SignIn).Methods("POST")
 
 	return r

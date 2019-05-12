@@ -22,7 +22,7 @@ func init() {
 
 	}
 	subscribersService = NewSubscriberService()
-	subscribersService.RunService()
+	go subscribersService.RunService()
 }
 
 type Transaction struct {
